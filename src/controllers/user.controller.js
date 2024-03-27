@@ -3,6 +3,26 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { uplaodOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import cookieParser from "cookie-parser";
+
+
+const generateAccessAndRefereshTokens = async (userId) => {
+  try {
+    const user = User.findOne(userId);
+    const accessToken = await user.generateAccessToken();
+    const refreshToken = await user.generateRefreshToken();
+    user.refreshToken = refreshToken;
+    await user.save({ ValidateBeforeSave: false });
+
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Internal server error while generation refresh and access token"
+    );
+  }
+};
+
 
 const registerUser = asyncHandler(async (req, res) => {
   // const {fullName, email} = req.body;
@@ -48,7 +68,7 @@ const registerUser = asyncHandler(async (req, res) => {
   if (
     req.files &&
     Array.isArray(req.files.coverImage) &&
-       req.files.coverImage.length > 0
+    req.files.coverImage.length > 0
   ) {
     coverImageLocalPath = req.files.coverImage[0].path;
   }
@@ -84,4 +104,62 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, createdUser, "user registerd successfully"));
 });
-export default registerUser;
+
+
+const loginUser = asyncHandler(async (req, res) => {
+  // Algorithm for login a user
+  // 1. req body ->DataTransfer
+  // 2. check for valid username or email in DB
+  // 3. find user in DB
+  // 4. password check in Db
+  // 5. access and refresh token
+  // 6. send cookie
+  // 7.
+
+  const { username, password, email } = req.body;
+
+  if (!email || !username) {
+    throw new ApiError(400, "username or email required");
+  }
+
+  const user = User.findOne({
+    $or: [{ email }, { username }],
+  });
+
+  if (!user) {
+    throw new ApiError(400, "user does not exist");
+  }
+
+  if (!user.isPasswordCorrect(password)) {
+    throw new ApiError(400, "invalid usrname or password");
+  }
+
+  const { accessToken, refreshToken } = generateAccessAndRefereshTokens(
+    user._id
+  );
+  const loggedInUser = await User.findOne(user._id).select(
+    "-password -refreshToken"
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken,options)
+    .cookie("refreshToken", refreshToken,options)
+    .json(
+       new ApiResponse(
+        200,
+        {
+          user : loggedInUser,accessToken,refreshToken
+        },
+        "User logged in successfully"
+       )
+    );
+});
+
+
+export { registerUser, loginUser };
