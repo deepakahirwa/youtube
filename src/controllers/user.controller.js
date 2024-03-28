@@ -5,7 +5,6 @@ import { uplaodOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import cookieParser from "cookie-parser";
 
-
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = User.findOne(userId);
@@ -22,7 +21,6 @@ const generateAccessAndRefereshTokens = async (userId) => {
     );
   }
 };
-
 
 const registerUser = asyncHandler(async (req, res) => {
   // const {fullName, email} = req.body;
@@ -105,7 +103,6 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, createdUser, "user registerd successfully"));
 });
 
-
 const loginUser = asyncHandler(async (req, res) => {
   // Algorithm for login a user
   // 1. req body ->DataTransfer
@@ -148,18 +145,44 @@ const loginUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .cookie("accessToken", accessToken,options)
-    .cookie("refreshToken", refreshToken,options)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
     .json(
-       new ApiResponse(
+      new ApiResponse(
         200,
         {
-          user : loggedInUser,accessToken,refreshToken
+          user: loggedInUser,
+          accessToken,
+          refreshToken,
         },
         "User logged in successfully"
-       )
+      )
     );
 });
 
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        refreshToken: undefined,
+      },
+    },
+    {
+      new: true,
+    }
+  );
 
-export { registerUser, loginUser };
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "User is logouted successfully"));
+});
+
+export { registerUser, loginUser, logoutUser };
