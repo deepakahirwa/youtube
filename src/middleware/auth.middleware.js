@@ -1,19 +1,24 @@
 import jwt from "jsonwebtoken";
-import { User } from "../models/user.model";
-import { ApiError } from "../utils/ApiError";
-import { asyncHandler } from "../utils/asyncHandler";
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
 
-const verifyJWT = asyncHandler(async (req, res, next) => {
+import { asyncHandler } from "../utils/asyncHandler.js";
+
+const verifyJWT = asyncHandler(async (req, _, next) => {
   try {
+    // console.log("authmiddleware",req.cookies);
     const Token =
-      req.cookie?.refreshToken ||
+      req.cookies?.accessToken ||
       req.header("Authorization")?.replace("Bearer ", "");
+
+    // console.log(Token);
+
     if (!Token) {
       throw new ApiError(401, "unauthorised request");
     }
 
-    const decodedToken = jwt.verify(process.env.REFRESH_TOKEN_SECRET, Token);
-    const user = await User.findOne(decodedToken?._id).select(
+    const decodedToken = jwt.verify(Token, process.env.ACCESS_TOKEN_SECRET);
+    const user = await User.findById(decodedToken?._id).select(
       "-refreshToken -password"
     );
     if (!user) {
@@ -31,7 +36,6 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
 });
 
 export { verifyJWT };
-
 
 // import { verify } from "jsonwebtoken";
 // const JWT_secret = "this-is-secret-key";

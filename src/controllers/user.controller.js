@@ -5,19 +5,36 @@ import { uplaodOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import cookieParser from "cookie-parser";
 
+
+
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
-    const user = User.findOne(userId);
-    const accessToken = await user.generateAccessToken();
-    const refreshToken = await user.generateRefreshToken();
-    user.refreshToken = refreshToken;
-    await user.save({ ValidateBeforeSave: false });
+    // Retrieve user by ID
+    const user = await User.findById(userId);
 
-    return { accessToken, refreshToken };
+    // Ensure user exists
+    if (!user) {
+      throw new Error(401, "User not found");
+    }
+
+    // Generate access and refresh tokens
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
+    // console.log(accessToken,refreshToken);
+    // Update user's refresh token
+    user.refreshToken = refreshToken;
+
+    // Save user (skip validation)
+    await user.save({ validateBeforeSave: false });
+
+    // Return tokens
+    return {accessToken,refreshToken};
   } catch (error) {
+    // Handle errors
+    console.error("Error generating tokens:", error);
     throw new ApiError(
       500,
-      "Internal server error while generation refresh and access token"
+      "Internal server error while generating refresh and access tokens"
     );
   }
 };
@@ -115,29 +132,32 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const { username, password, email } = req.body;
 
-  if (!email || !username) {
+  if (!email && !username) {
     throw new ApiError(400, "username or email required");
   }
 
-  const user = User.findOne({
+  const user = await User.findOne({
     $or: [{ email }, { username }],
   });
 
   if (!user) {
     throw new ApiError(400, "user does not exist");
   }
-
-  if (!user.isPasswordCorrect(password)) {
+  // console.log(user.methods);
+  const isPasswordValid = await user.isPasswordCorrect(password);
+  // console.log(isPasswordValid);
+  if (!isPasswordValid) {
     throw new ApiError(400, "invalid usrname or password");
   }
-
-  const { accessToken, refreshToken } = generateAccessAndRefereshTokens(
+  // console.log(user._id);
+  const {accessToken,refreshToken} = await generateAccessAndRefereshTokens(
     user._id
   );
+  // console.log(accessToken,refreshToken);
   const loggedInUser = await User.findOne(user._id).select(
     "-password -refreshToken"
   );
-
+  //  console.log(loggedInUser);
   const options = {
     httpOnly: true,
     secure: true,
@@ -180,8 +200,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("accesstoken", options)
+    .clearCookie("refreshtoken", options)
     .json(new ApiResponse(200, {}, "User is logouted successfully"));
 });
 
