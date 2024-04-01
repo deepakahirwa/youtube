@@ -9,7 +9,7 @@ cloudinary.config({
 
 const deleteOncloudinary = async (url) => {
   const publicId = extractPublicId(url)
-  
+  console.log(publicId);
  const res = await cloudinary.uploader.destroy(publicId);
  
  return res;

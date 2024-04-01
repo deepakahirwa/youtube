@@ -35,4 +35,7 @@ const PostSchema = new Schema(
 
 PostSchema.plugin(mongooseAggregatePaginate);
 
-export const Post = mongoose.model("Post", PostSchema);
+
+// post.model.js
+
+export const post = mongoose.model('Post', PostSchema);
