@@ -34,7 +34,15 @@ const videoSchema = new Schema({
       owner:{
         type:Schema.Types.ObjectId,
         ref:"User"
-      }
+      },
+      comments:[{
+            type :Schema.Types.ObjectId,
+            ref :"comments"
+      }],
+      like_dislike:[{
+        type:Schema.Types.ObjectId,
+        ref:"likes"
+      }]
 
 },{timestamps:true});
 

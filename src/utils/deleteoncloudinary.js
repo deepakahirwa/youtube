@@ -1,6 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { extractPublicId } from 'cloudinary-build-url'
-import { url } from "inspector";
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
