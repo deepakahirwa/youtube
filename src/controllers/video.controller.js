@@ -5,33 +5,23 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uplaodOnCloudinary } from "../utils/cloudinary.js";
-
 import { deleteOncloudinary } from "../utils/deleteoncloudinary.js";
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
   //TODO: get all videos based on query, sort, pagination
-  // await Video.find({}, (error, videos) => {
-  //   if (error) {
-    
-      
-  //   } else {
-     
-  //   }
 
-  // });
   await Video.find({})
-  .then(videos => {
-    return res
+    .then((videos) => {
+      return res
         .status(200)
         .json(new ApiResponse(200, videos, "all videos fetched successfully"));
-    // Handle retrieved videos
-  })
-  .catch(error => {
-    res
-    .status(404)
-    .json(new ApiError(404, `error in fetching videos ${error}`));
-  });
+    })
+    .catch((error) => {
+      res
+        .status(404)
+        .json(new ApiError(404, `error in fetching videos ${error}`));
+    });
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -43,21 +33,22 @@ const publishAVideo = asyncHandler(async (req, res) => {
   if (!title || !description) {
     throw new ApiError(400, "title and description all are required");
   }
-  const thumbnail_localpath = req.files?.thumbnail[0]?.path;
-  //   const video_localpath = user?.videoFile[0]?.path;  // its for if you only if both files is to upload
+  const video_localpath = req.files?.video[0]?.path;
+  //   const thumbnail_localpath = user?.videoFile[0]?.path;  // its for if you only if both files is to upload
 
-  let video_localpath = req.files?.videoFile[0]?.path;
+  let thumbnail_localpath = req.files?.thumbnail[0]?.path;
   //   const coverImageLocalPath = req.files.coverImage[0]?.path;
+  let thumbnail = null;
   if (
     req.files &&
-    Array.isArray(req.files.videoFile) &&
-    req.files?.videoFile.length > 0
+    Array.isArray(req.files.thumbnail) &&
+    req.files?.thumbnail.length > 0
   ) {
-    video_localpath = req.files?.videoFile[0]?.path;
+    thumbnail_localpath = req.files?.thumbnail[0]?.path;
+    thumbnail = await uplaodOnCloudinary(thumbnail_localpath);
   }
 
   const video = await uplaodOnCloudinary(video_localpath);
-  const thumbnail = await uplaodOnCloudinary(thumbnail_localpath);
 
   if (!video || !thumbnail) {
     throw new ApiError(500, "error in uploading the content on Cloud ");
@@ -67,7 +58,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
   console.log(thumbnail.url, video.url);
   const createVideo = await Video.create({
     videoFile: video.url,
-    thumbnail: thumbnail.url,
+    thumbnail: thumbnail?.url,
     title,
     description,
     duration: video.duration,
@@ -141,15 +132,16 @@ const updateVideo = asyncHandler(async (req, res) => {
     video.thumbnail = thumbnail_url.url;
     flage = false;
   }
-  console.log(flage);
+  // console.log(flage);
   if (flage) {
-    throw new ApiError(404, "nothing for update");
+    throw new ApiError(404, "nothing has updated");
   }
   const updated_video = await video.save({ validateBeforeSave: false });
   return res
     .status(200)
     .json(new ApiResponse(200, updated_video, "video isupdated successfully"));
 });
+
 const deleteVideo = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
   //TODO: delete video
@@ -172,18 +164,7 @@ const deleteVideo = asyncHandler(async (req, res) => {
   }
 
   const cloud_delete_video = await deleteOncloudinary(video.videoFile);
-  const cloud_delete_thumbnail = await deleteOncloudinary(
-    video.thumbnail,
-    (error, result) => {
-      if (error) {
-        console.error("Error deleting video:", error);
-        // Handle error
-      } else {
-        console.log("Video deleted successfully:", result);
-        // Handle success
-      }
-    }
-  );
+  const cloud_delete_thumbnail = await deleteOncloudinary(video.thumbnail);
   const deleted_video = await Video.findByIdAndDelete(videoId);
   // console.log(deleted_video);
 

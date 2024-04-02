@@ -2,7 +2,7 @@ import mongooseAggregatePaginate from "mongoose-paginate-v2";
 
 import mongoose, { Schema } from "mongoose";
 
-const PostSchema = new Schema(
+export const PostSchema = new Schema(
   {
     owner: {
       type: Schema.Types.ObjectId,
@@ -35,7 +35,4 @@ const PostSchema = new Schema(
 
 PostSchema.plugin(mongooseAggregatePaginate);
 
-
-// post.model.js
-
-export const post = mongoose.model('Post', PostSchema);
+export const Post = mongoose.model("Post", PostSchema);
