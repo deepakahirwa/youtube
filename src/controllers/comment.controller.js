@@ -14,17 +14,15 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const all_comments = await Video.aggregate([
     {
       $match: {
-        _id: videoId,
+        _id: new mongoose.Types.ObjectId(videoId),
       },
     },
     {
-      $unwind: {
-        comments: "$comments",
-      },
+      $unwind: "$comments",
     },
     {
       $lookup: {
-        from: "comment",
+        from: "comments",
         localField: "comments",
         foreignField: "_id",
         as: "realComments",
@@ -33,9 +31,15 @@ const getVideoComments = asyncHandler(async (req, res) => {
     {
       $limit: limit,
     },
+    {
+      
+      $project:{
+        realComments:1
+      }
+    }
   ]);
 
-  console.log(all_comments);
+  // console.log(all_comments);
   return res
     .status(200)
     .json(
@@ -125,16 +129,16 @@ const addVideoComment = asyncHandler(async (req, res) => {
       new ApiResponse(200, created_comment, "comment is created successfully")
     );
 });
-
+// This controller is not tested yet
 const addPostComment = asyncHandler(async (req, res) => {
   // TODO: add a comment to a video
   const userGiven = req.user;
   const { CommentToUpload } = req.body;
-  const { videoId } = req.params;
+  const { PostId } = req.params;
   if (!CommentToUpload) {
     throw new ApiError(404, "comment is empty");
   }
-  if (!videoId) {
+  if (!PostId) {
     throw new ApiError(
       404,
       "video Id is must required for commneting on video"
@@ -144,10 +148,10 @@ const addPostComment = asyncHandler(async (req, res) => {
     throw new ApiError(400, "login is required for commeting on video");
   }
 
-  const video = await Video.findById(videoId);
+  const post = await Post.findById(PostId);
 
-  if (!video) {
-    throw new ApiError(400, "video is not present in DB");
+  if (!post) {
+    throw new ApiError(400, "post is not present in DB");
   }
 
   const created_comment = await Comment.create({
@@ -155,9 +159,9 @@ const addPostComment = asyncHandler(async (req, res) => {
     owner: userGiven._id,
   });
   // IN this place we have to apply pipeline for get all comments of video and likes
-  video.comments.push(created_comment.id);
-  const changedvideo = await video.save();
-  //  console.log(changedvideo)
+  post.comments.push(created_comment.id);
+  const changedvideo = await post.save();
+  console.log(changedvideo);
   return res
     .status(200)
     .json(
@@ -167,19 +171,20 @@ const addPostComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
   // TODO: update a comment
+  const { commentId } = req.params;
+  const { updated_comment } = req.body;
 
-  const { updated_comment, comment_id } = req.body;
-  if (comment_id || updated_comment) {
+  if (!commentId || !updated_comment) {
     throw new ApiError(404, "updated comment or commnet_id is empty");
   }
   if (req.user == undefined) {
     throw new ApiError(404, "user is not found ");
   }
-  const comment = await Comment.findById(comment_id);
+  const comment = await Comment.findById(commentId);
   if (!comment) {
     throw new ApiError(404, "updated comment or commnet_id is empty");
   }
-  if (comment.owner !== req.user._id) {
+  if (comment.owner.toString() !== req.user._id.toString()) {
     throw new ApiError(400, "you the not authorised person for updation");
   }
 
@@ -199,8 +204,8 @@ const deleteComment = asyncHandler(async (req, res) => {
   // TODO: delete a comment
 
   const userGiven = req.user;
-  const { comment_id } = req.body;
-  const { videoId } = req.params;
+  const { videoId } = req.body;
+  const { comment_id } = req.params;
 
   if (!videoId) {
     throw new ApiError(
@@ -213,7 +218,7 @@ const deleteComment = asyncHandler(async (req, res) => {
   }
 
   // delete comment which is stored in comment array of video
-  const video = await Video.find(video);
+  const video = await Video.findById(videoId);
 
   if (!video) {
     throw new ApiError(400, "video is not present in DB");
