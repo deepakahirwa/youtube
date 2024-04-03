@@ -23,7 +23,7 @@ const PlaylistSchema = new Schema(
     name: {
       type: String,
     },
-    discription: {
+    description: {
       type: String,
     },
   },

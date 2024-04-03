@@ -285,7 +285,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
   if (!fullName && !email) {
     throw new ApiError(400, "All fields are required");
   }
-  
+
   const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
@@ -309,7 +309,6 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(400, "unauthorised access for updateimage");
   }
   const delete_res = await deleteOncloudinary(olduser.avatar);
- 
 
   const avatarLocalPath = req.file?.path;
   if (!avatarLocalPath) {
@@ -317,14 +316,13 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
   }
 
   const avatar = await uplaodOnCloudinary(avatarLocalPath);
-  
+
   if (!avatar.url) {
     throw new ApiError(400, "avatar is not uploded on Cloudinary");
   }
 
   olduser.avatar = avatar.url;
   olduser.save({ validateBeforeSave: false });
-  
 
   return res
     .status(200)
@@ -332,13 +330,12 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 });
 
 const updateUserCoverImage = asyncHandler(async (req, res) => {
-  //TODO: delete old image 
+  //TODO: delete old image
   const olduser = await User.findById(req.user?._id).select("-password");
   if (!olduser) {
     throw new ApiError(400, "unauthorised access for updateimage");
   }
   const delete_res = await deleteOncloudinary(olduser.coverimage);
-  
 
   // upload new cover image
   const coverImageLocalPath = req.file?.path;
@@ -348,7 +345,6 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   }
 
   const coverImage = await uplaodOnCloudinary(coverImageLocalPath);
-  
 
   if (!coverImage.url) {
     throw new ApiError(400, "Error while uploading on avatar");
@@ -430,8 +426,10 @@ const getUserProfile = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, channel[0], "channel is fetched successfully"));
 });
 
-
 const getUserHistory = asyncHandler(async (req, res) => {
+  if (!req.user._id) {
+    throw new ApiError(400, "you have never send user");
+  }
   const user = await User.aggregate([
     {
       $match: {
