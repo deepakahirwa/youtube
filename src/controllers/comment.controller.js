@@ -51,6 +51,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
     );
 });
 
+
 const getPostComments = asyncHandler(async (req, res) => {
   //TODO: get all comments for a video
   const { PostId } = req.params;
@@ -91,6 +92,7 @@ const getPostComments = asyncHandler(async (req, res) => {
     );
 });
 
+
 const addVideoComment = asyncHandler(async (req, res) => {
   // TODO: add a comment to a video
   const userGiven = req.user;
@@ -129,6 +131,8 @@ const addVideoComment = asyncHandler(async (req, res) => {
       new ApiResponse(200, created_comment, "comment is created successfully")
     );
 });
+
+
 // This controller is not tested yet
 const addPostComment = asyncHandler(async (req, res) => {
   // TODO: add a comment to a video
@@ -168,6 +172,7 @@ const addPostComment = asyncHandler(async (req, res) => {
       new ApiResponse(200, created_comment, "comment is created successfully")
     );
 });
+
 
 const updateComment = asyncHandler(async (req, res) => {
   // TODO: update a comment
@@ -231,6 +236,7 @@ const deleteComment = asyncHandler(async (req, res) => {
       new ApiResponse(200, Deleted_comment, "comment is deleted succefully")
     );
 });
+
 
 export {
   getVideoComments,

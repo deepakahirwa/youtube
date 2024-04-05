@@ -39,7 +39,7 @@ import dashboardRouter from "./routes/dashboard.routes.js"
 //routes declaration
 app.use("/api/v1/healthcheck", healthcheckRouter)
 app.use("/api/v1/users", userRouter)
-app.use("/api/v1/tweets", post)
+app.use("/api/v1/post", post)
 app.use("/api/v1/subscriptions", subscriptionRouter)
 app.use("/api/v1/videos", videoRouter)
 app.use("/api/v1/comments", commentRouter)

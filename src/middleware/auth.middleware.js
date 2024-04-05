@@ -4,7 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 
 import { asyncHandler } from "../utils/asyncHandler.js";
 
-const verifyJWT = asyncHandler(async (req, _, next) => {
+const verifyJWT = asyncHandler(async (req, _ , next) => {
   try {
     // console.log("authmiddleware",req.cookies);
     const Token =
@@ -37,23 +37,4 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
 
 export { verifyJWT };
 
-// import { verify } from "jsonwebtoken";
-// const JWT_secret = "this-is-secret-key";
-// const fetchuser = (req, res, next) => {
-//   // get the user from the jwt token and add id to req object
-//   const token = req.header("auth-token");
-//   if (!token) {
-//     res.status(401).send({ Error: "please authentication using valid token" });
-//   }
-//   try {
-//     const data = verify(token, JWT_secret);
-//     req.user = data.user;
-//     next();
-//   } catch (error) {
-//     res.status(401).send({ Error: "please authentication using valid token" });
-//   }
-// };
 
-// export default fetchuser;
-
-// import jwt from "jsonwebtoken"
