@@ -23,7 +23,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
         .json(new ApiError(404, `error in fetching videos ${error}`));
     });
 });
-
+// there is error in publishing the video, multer middleware is not working
 const publishAVideo = asyncHandler(async (req, res) => {
   const { title, description } = req.body;
   const user = req.user;
@@ -33,9 +33,10 @@ const publishAVideo = asyncHandler(async (req, res) => {
   if (!title || !description) {
     throw new ApiError(400, "title and description all are required");
   }
-  const video_localpath = req.files?.video[0]?.path;
+  console.log(req.files);
+  const video_localpath = req.files?.videoFile[0]?.path;
   //   const thumbnail_localpath = user?.videoFile[0]?.path;  // its for if you only if both files is to upload
-
+  console.log(video_localpath);
   let thumbnail_localpath = req.files?.thumbnail[0]?.path;
   //   const coverImageLocalPath = req.files.coverImage[0]?.path;
   let thumbnail = null;

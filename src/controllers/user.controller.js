@@ -332,11 +332,15 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 const updateUserCoverImage = asyncHandler(async (req, res) => {
   //TODO: delete old image
   const olduser = await User.findById(req.user?._id).select("-password");
+  
   if (!olduser) {
     throw new ApiError(400, "unauthorised access for updateimage");
   }
-  const delete_res = await deleteOncloudinary(olduser.coverimage);
-
+  console.log(olduser.coverimage);
+  if (olduser.coverimage!=='') {
+    const delete_res = await deleteOncloudinary(olduser.coverimage);
+    console.log(delete_res);
+  }
   // upload new cover image
   const coverImageLocalPath = req.file?.path;
 
@@ -345,7 +349,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
   }
 
   const coverImage = await uplaodOnCloudinary(coverImageLocalPath);
-
+  
   if (!coverImage.url) {
     throw new ApiError(400, "Error while uploading on avatar");
   }

@@ -6,6 +6,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uplaodOnCloudinary } from "../utils/cloudinary.js";
 import { deleteOncloudinary } from "../utils/deleteoncloudinary.js";
+import multer from "multer";
+
 
 const createPost = asyncHandler(async (req, res) => {
   const { caption } = req.body;
@@ -66,9 +68,10 @@ const createPost = asyncHandler(async (req, res) => {
 
 const getUserPost = asyncHandler(async (req, res) => {
   // TODO: get user posts
-  const userId = req.params;
+  const userId = new mongoose.Types.ObjectId(req.user._id);
+
   const userPosts = await Post.find({
-    owner: new mongoose.Types.ObjectId(req.user._id),
+    owner: userId,
   });
 
   // Check if user posts exist
