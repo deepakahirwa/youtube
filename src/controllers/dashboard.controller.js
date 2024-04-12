@@ -72,14 +72,19 @@ const getChannelStats = asyncHandler(async (req, res) => {
     };
 
     // Send the response
-    res.status(200).json(new ApiResponse(200, stats, "Dashboard details fetched successfully"));
+    res
+      .status(200)
+      .json(
+        new ApiResponse(200, stats, "Dashboard details fetched successfully")
+      );
   } catch (error) {
     // Handle errors
     console.error(error);
-    res.status(500).json(new ApiError(500, `There is an error: ${error.message}`));
+    res
+      .status(500)
+      .json(new ApiError(500, `There is an error: ${error.message}`));
   }
 });
-
 
 const getChannelVideos = asyncHandler(async (req, res) => {
   try {

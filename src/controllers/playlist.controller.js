@@ -9,7 +9,7 @@ const createPlaylist = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
   // Check if name and description are provided
-  if (!name || !description) {
+  if (name === undefined || description === undefined) {
     throw new ApiError(400, "Name and Description of Playlist are required");
   }
 
@@ -184,26 +184,31 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
 const deletePlaylist = asyncHandler(async (req, res) => {
   const { playlistId } = req.params;
 
-  try {
+  // try {
     // Find the playlist by ID
     const playlist = await Playlist.findById(playlistId);
-
+    
     // Check if the playlist exists
     if (!playlist) {
       throw new ApiError(404, "Playlist not found");
     }
 
+    // Check if the user is the owner of the playlist
+    if (playlist.owner.toString() !== req.user._id.toString()) {
+      throw new ApiError(400, "You are not the owner of this playlist");
+    }
+
     // Remove the playlist from the database
-    await playlist.remove();
+    await Playlist.findByIdAndDelete(playlistId)
 
     // Return success response
     return res
       .status(200)
       .json(new ApiResponse(200, null, "Playlist deleted successfully"));
-  } catch (error) {
-    // Handle any errors
-    throw new ApiError(500, "Error deleting playlist");
-  }
+  // } catch (error) {
+  //   // Handle any errors
+  //   throw new ApiError(500, "Error deleting playlist");
+  // }
 });
 
 const updatePlaylist = asyncHandler(async (req, res) => {
@@ -211,7 +216,7 @@ const updatePlaylist = asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
   // Check if name or description is provided
-  if (!name && !description) {
+  if (name === undefined && description === undefined) {
     throw new ApiError(
       400,
       "Name or Description of Playlist is required for update"

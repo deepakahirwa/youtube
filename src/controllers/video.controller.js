@@ -33,7 +33,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
   if (!title || !description) {
     throw new ApiError(400, "title and description all are required");
   }
-  console.log(req.files);
+  // console.log(req.files);
   const video_localpath = req.files?.videoFile[0]?.path;
   //   const thumbnail_localpath = user?.videoFile[0]?.path;  // its for if you only if both files is to upload
   console.log(video_localpath);

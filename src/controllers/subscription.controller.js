@@ -46,7 +46,10 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
   const all_subscribers = await Subscription.find({ channel: subscriberId });
   if (all_subscribers.length === 0) {
-    throw new ApiError(500, "Error fetching subscribers from the database or you have not any subscriber");
+    throw new ApiError(
+      500,
+      "Error fetching subscribers from the database or you have not any subscriber"
+    );
   }
   return res
     .status(200)
