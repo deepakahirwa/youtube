@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
-import mongooseAggregatePaginate from 'mongoose-paginate-v2'
+import mongooseAggregatePaginate from "mongoose-paginate-v2";
+import { type } from "os";
 const LikeSchema = new Schema(
   {
     owner: {
@@ -8,15 +9,19 @@ const LikeSchema = new Schema(
       required: true,
     },
     value: {
+      type: String,
+      enum: [-1, 0, 1],
+      default: 0,
+    },
+    type: {
       type: Number,
-      enum: [-1,0, 1],
-      default:0
+      enum: [1, 0, 2, -1],
+      default: 0,
     },
   },
   { timestamps: true }
 );
 
-
-LikeSchema.plugin(mongooseAggregatePaginate)
+LikeSchema.plugin(mongooseAggregatePaginate);
 
 export const Like = mongoose.model("Like", LikeSchema);

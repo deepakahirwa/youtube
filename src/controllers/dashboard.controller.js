@@ -112,7 +112,7 @@ const getChannelVideos = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          { userVideos, userPosts },
+          { videos: userVideos, Posts: userPosts },
           "User dashboard fetched successfully"
         )
       );
