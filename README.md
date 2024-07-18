@@ -17,10 +17,7 @@ This project is a backend implementation of a YouTube-like platform, providing v
 - **Health Check**: Endpoint to check the health of the server.
 - **User Management**: Users can manage their account details.
 
-## Installation
 
-``
-Install my-project with npm
 
 ## Installation
 
