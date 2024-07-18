@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 # YouTube Backend Project
 
 This project is a backend implementation of a YouTube-like platform, providing various features such as video uploads, comments, playlists, subscriptions, user authentication, and more.
@@ -276,7 +276,4 @@ Start the server
 ### **Testing**
 
 - `Use a tool like Postman to test the endpoints.`
-=======
 
-
->>>>>>> 27e4cb40112089f501be00880ea8ae082a445d42
