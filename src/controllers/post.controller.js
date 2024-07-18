@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { uplaodOnCloudinary } from "../utils/cloudinary.js";
 import { deleteOncloudinary } from "../utils/deleteoncloudinary.js";
-import multer from "multer";
+
 
 
 const createPost = asyncHandler(async (req, res) => {
@@ -76,7 +76,10 @@ const getUserPost = asyncHandler(async (req, res) => {
 
   // Check if user posts exist
   if (!userPosts || userPosts.length === 0) {
-    throw new ApiError(404, "User has not uploaded any posts");
+    console.log("No posts");
+    res
+    .status(200)
+    .json(new ApiResponse(200, userPosts, "post is not uploaded by you"));
   }
 
   // Return success response with user posts

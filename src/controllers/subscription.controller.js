@@ -68,15 +68,48 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
   //   throw new ApiError(404, "Subscriber ID is not provided");
   // }
   const all_channels = await Subscription.find({ subscriber: req.user._id });
+  const following = await Subscription.aggregate([
+    {
+      $match: {
+        subscriber: new mongoose.Types.ObjectId(req.user._id),
+        // value: "1",
+        // type: 1,
+      }
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "subscriber",
+        foreignField: "_id",
+        as: "friends",
+        pipeline: [
+          {
+            '$project': {
+              _id: 1,
+              avatar: 1,
+              fullname: 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      $project: {
+        friends: 1
+      }
+    }
+  ])
   if (all_channels.length === 0) {
     throw new ApiError(404, "No channels found for the subscriber");
   }
+
+ console.log(following[0].friends[0]);
   return res
     .status(200)
     .json(
       new ApiResponse(
         200,
-        all_channels,
+        following[0].friends,
         "Subscribed channels fetched successfully"
       )
     );

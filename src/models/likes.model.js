@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import mongooseAggregatePaginate from "mongoose-paginate-v2";
-import { type } from "os";
+
 const LikeSchema = new Schema(
   {
     owner: {

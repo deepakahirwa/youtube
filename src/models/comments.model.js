@@ -16,7 +16,6 @@ const subcomments = new Schema({
   },
 });
 
-
 const CommentSchema = new Schema(
   {
     owner: {
@@ -36,7 +35,6 @@ const CommentSchema = new Schema(
   },
   { timestamps: true }
 );
-
 
 CommentSchema.plugin(mongooseAggregatePaginate);
 

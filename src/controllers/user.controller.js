@@ -136,7 +136,7 @@ const loginUser = asyncHandler(async (req, res) => {
   if (!email && !username) {
     throw new ApiError(400, "username or email required");
   }
-
+  // console.log(email,password);
   const user = await User.findOne({
     $or: [{ email }, { username }],
   });
@@ -274,6 +274,8 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 });
 
 const getCurrentUser = asyncHandler(async (req, res) => {
+
+   
   return res
     .status(200)
     .json(new ApiResponse(200, req.user, "User fetched successfully"));

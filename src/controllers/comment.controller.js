@@ -32,9 +32,9 @@ const getVideoComments = asyncHandler(async (req, res) => {
       $limit: limit,
     },
     {
-      
-      $project:{
-        realComments:1
+
+      $project: {
+        realComments: 1
       }
     }
   ]);

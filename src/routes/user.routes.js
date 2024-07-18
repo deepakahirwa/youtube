@@ -33,7 +33,7 @@ router.route("/register").post(
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/refreshAccessToken").post(refreshAccessToken);
-router.route("/get-current-user").post(getCurrentUser);
+router.route("/get-current-user").get(verifyJWT,getCurrentUser);
 
 router.route("/update-password").patch(verifyJWT, changeCurrentPassword);
 
