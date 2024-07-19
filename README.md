@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # YouTube Backend Project
 
 This project is a backend implementation of a YouTube-like platform, providing various features such as video uploads, comments, playlists, subscriptions, user authentication, and more.
@@ -112,7 +111,6 @@ Install my-project with npm
       Handles file uploads using multer.
 
 - auth.middleware.js
-     
       Handles JWT authentication.
 
 ### Controllers
@@ -154,7 +152,6 @@ Install my-project with npm
        Handles user information, updates, and management.
 
 - video.controller.js
-
 
        Handles video uploads, retrieval, editing, deletion, and searching.
 
@@ -276,7 +273,3 @@ Start the server
 ### **Testing**
 
 - `Use a tool like Postman to test the endpoints.`
-=======
-
-
->>>>>>> 27e4cb40112089f501be00880ea8ae082a445d42
