@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> d81bd71bd33f3fe9ed6c1071b3492be1ed622439
 # YouTube Backend Project
 
 This project is a backend implementation of a YouTube-like platform, providing various features such as video uploads, comments, playlists, subscriptions, user authentication, and more.
@@ -16,10 +20,7 @@ This project is a backend implementation of a YouTube-like platform, providing v
 - **Health Check**: Endpoint to check the health of the server.
 - **User Management**: Users can manage their account details.
 
-## Installation
 
-``
-Install my-project with npm
 
 ## Installation
 
@@ -273,3 +274,7 @@ Start the server
 ### **Testing**
 
 - `Use a tool like Postman to test the endpoints.`
+<<<<<<< HEAD
+=======
+
+>>>>>>> d81bd71bd33f3fe9ed6c1071b3492be1ed622439
