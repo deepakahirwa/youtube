@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 
->>>>>>> d81bd71bd33f3fe9ed6c1071b3492be1ed622439
-# YouTube Backend Project
+# Video Streaming plateform Backend Project
 
 This project is a backend implementation of a YouTube-like platform, providing various features such as video uploads, comments, playlists, subscriptions, user authentication, and more.
 
@@ -274,7 +271,3 @@ Start the server
 ### **Testing**
 
 - `Use a tool like Postman to test the endpoints.`
-<<<<<<< HEAD
-=======
-
->>>>>>> d81bd71bd33f3fe9ed6c1071b3492be1ed622439
